@@ -2,6 +2,8 @@ package conra.mentoria.lojavirtual;
 
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +39,7 @@ public class LojaVirtualMentoriaApplicationTests extends TestCase {
 	
 	@Autowired
 	private WebApplicationContext wac;
+	
 	
 	/*Teste do end-point de salvar*/
 	@Test
@@ -216,6 +219,16 @@ public class LojaVirtualMentoriaApplicationTests extends TestCase {
 		assertEquals(1, acessos.size());
 		
 		acessoRepository.deleteById(acesso.getId());
+	}
+	
+	@Test
+	public void testeBuscarAcesso() {
+
+		/*Teste de query*/
+		List<Acesso> acessos = acessoRepository.buscarAcessoDescricao("ADMIN".trim().toUpperCase());
+		
+		assertEquals(12, acessos.size());
+
 	}
 
 }
