@@ -36,9 +36,21 @@ public abstract class Pessoa implements Serializable {
 	
 	@Column(nullable = false)
 	private String telefone;
+	
+	@Column
+	private String tipoPessoa; /*Cliente,Usuario,Secretario,Funcionario*/
 
 	@OneToMany(mappedBy = "pessoa", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY) 
 	private List<Endereco> enderecos = new ArrayList<>();
+	
+	
+	public String getTipoPessoa() {
+		return tipoPessoa;
+	}
+
+	public void setTipoPessoa(String tipoPessoa) {
+		this.tipoPessoa = tipoPessoa;
+	}
 
 	public Long getId() {
 		return id;
