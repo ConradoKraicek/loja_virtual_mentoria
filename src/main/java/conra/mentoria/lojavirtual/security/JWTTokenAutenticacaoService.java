@@ -1,5 +1,6 @@
 package conra.mentoria.lojavirtual.security;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,8 +14,10 @@ import org.springframework.stereotype.Service;
 import conra.mentoria.lojavirtual.ApplicationContextLoad;
 import conra.mentoria.lojavirtual.model.Usuario;
 import conra.mentoria.lojavirtual.repository.UsuarioRepository;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
 
 /*Criar a autenticação e retornar também a autenticação JWT*/
 @Service
@@ -56,9 +59,11 @@ public class JWTTokenAutenticacaoService {
 	}
 	
 	/*Retorna o usuário validado com token ou caso não seja valido retorna null*/
-	public Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) {
+	public Authentication getAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
 		String token = request.getHeader(HEADER_STRING);
+		
+		try {
 		
 		if (token != null) {
 			
@@ -77,7 +82,14 @@ public class JWTTokenAutenticacaoService {
 			}
 		}
 		
-		liberacaoCors(response);
+		}catch (SignatureException e ) {
+			response.getWriter().write("Token está inválido");
+		}catch (ExpiredJwtException e ) {
+			response.getWriter().write("Token está expirado, efetue o login novamente");
+		}finally {
+			liberacaoCors(response);
+		}
+		
 		return null;
 	}
 	
