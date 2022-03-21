@@ -1,7 +1,9 @@
 package conra.mentoria.lojavirtual.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
 
+import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -24,6 +26,9 @@ public class PessoaUserService {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	@Autowired
+	private ServiceSendEmail serviceSendEmail;
 	
 	
 	public PessoaJuridica salvarPessoaJuridica(PessoaJuridica juridica) {
@@ -61,7 +66,19 @@ public class PessoaUserService {
 			
 			usuarioRepository.insereAcessoUserPj(usuarioPj.getId());
 			
-			/*Fazer o envio de e-mail do login e da senha*/
+			StringBuilder mensagemHtml = new StringBuilder();
+			
+			mensagemHtml.append("<b>Segue abaixo seus dados de acesso para loja virtual</b>");
+			mensagemHtml.append("<b>Login: </b>"+juridica.getEmail()+"<br/>");
+			mensagemHtml.append("<b>Senha: </b>").append(senha).append("<br/><br/>");
+			mensagemHtml.append("Obrigado!");
+			
+			
+			try {
+				serviceSendEmail.enviarEmailHtml("Acesso Gerado para Loja Virtual", mensagemHtml.toString(), juridica.getEmail());
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
 		}
 		
 		return juridica;
