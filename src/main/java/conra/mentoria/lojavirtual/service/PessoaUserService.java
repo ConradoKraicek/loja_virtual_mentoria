@@ -1,9 +1,6 @@
 package conra.mentoria.lojavirtual.service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Calendar;
-
-import javax.mail.MessagingException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
