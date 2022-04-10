@@ -32,7 +32,7 @@ public interface UsuarioRepository extends CrudRepository<Usuario, Long>{
 	@Transactional 
 	@Modifying		 
 	@Query(nativeQuery = true, value = "insert into usuarios_acesso(usuario_id, acesso_id) values (?1, (select id from acesso where descricao = 'ROLER_USER'))")
-	void insereAcessoUserPj(Long id);
+	void insereAcessoUser(Long id);
 	
 	@Transactional 
 	@Modifying		 
