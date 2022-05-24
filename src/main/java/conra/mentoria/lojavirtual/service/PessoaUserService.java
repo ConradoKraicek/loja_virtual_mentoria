@@ -12,6 +12,7 @@ import conra.mentoria.lojavirtual.model.PessoaFisica;
 import conra.mentoria.lojavirtual.model.PessoaJuridica;
 import conra.mentoria.lojavirtual.model.Usuario;
 import conra.mentoria.lojavirtual.model.dto.CepDTO;
+import conra.mentoria.lojavirtual.model.dto.ConsultaCnpjDTO;
 import conra.mentoria.lojavirtual.repository.PessoaFisicaRepository;
 import conra.mentoria.lojavirtual.repository.PessoaRepository;
 import conra.mentoria.lojavirtual.repository.UsuarioRepository;
@@ -147,6 +148,11 @@ public class PessoaUserService {
 	public CepDTO consultaCep(String cep) {
 		
 		return new RestTemplate().getForEntity("https://viacep.com.br/ws/" + cep + "/json/", CepDTO.class).getBody();
+	}
+	
+    public ConsultaCnpjDTO consultaCnpjReceitaWS(String cnpj) {
+		
+		return new RestTemplate().getForEntity("https://receitaws.com.br/v1/cnpj/" + cnpj, ConsultaCnpjDTO.class).getBody();
 	}
 
 }
