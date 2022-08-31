@@ -103,7 +103,17 @@ public class VendaCompraLojaVirtual implements Serializable {
 	@OneToMany(mappedBy = "vendaCompraLojaVirtual", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<ItemVendaLoja> itemVendaLojas = new ArrayList<>();
 	
+	private Boolean excluido = Boolean.FALSE;
 	
+	
+	public Boolean getExcluido() {
+		return excluido;
+	}
+
+	public void setExcluido(Boolean excluido) {
+		this.excluido = excluido;
+	}
+
 	public List<ItemVendaLoja> getItemVendaLojas() {
 		return itemVendaLojas;
 	}

@@ -101,7 +101,7 @@ public class TestePessoaUsuario extends TestCase {
 		
 		PessoaFisica pessoaFisica = new PessoaFisica();
 		
-		pessoaFisica.setCpf("966.970.320-49");
+		pessoaFisica.setCpf("517.768.530-67");
 		pessoaFisica.setNome("Conrado Albuquerque");
 		pessoaFisica.setEmail("conradoereretrempresa123@gmail.com");
 		pessoaFisica.setTelefone("071996568989");

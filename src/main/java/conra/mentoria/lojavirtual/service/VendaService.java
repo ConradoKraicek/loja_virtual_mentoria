@@ -27,4 +27,21 @@ public class VendaService {
 		
 	}
 	
+	
+	public void exclusaoTotalVendaBanco2(Long idVenda) {
+		
+		String sql = "begin; update vd_cp_loja_virt set excluido = true where id = " + idVenda + "; commit;";
+		
+		jdbcTemplate.execute(sql);
+		
+	}
+
+
+	public void ativaRegistroVendaBanco(Long idVenda) {
+        String sql = "begin; update vd_cp_loja_virt set excluido = false where id = " + idVenda + "; commit;";
+		
+		jdbcTemplate.execute(sql);
+		
+	}
+	
 }
