@@ -1,5 +1,6 @@
 package conra.mentoria.lojavirtual.repository;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -30,5 +31,8 @@ public interface Vd_Cp_Loja_Virt_Repository extends JpaRepository<VendaCompraLoj
 	
 	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and upper(trim(i.vendaCompraLojaVirtual.enderecoEntrega.ruaLogra)) like %?1%")
 	List<VendaCompraLojaVirtual> vendaPorEnderecoEntrega(String enderecoEntrega);
+	
+	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and i.vendaCompraLojaVirtual.dataVenda >= ?1 and i.vendaCompraLojaVirtual.dataVenda <= ?2")
+	List<VendaCompraLojaVirtual> consultaVendaFaixaData(Date data1, Date data2);
 
 }
