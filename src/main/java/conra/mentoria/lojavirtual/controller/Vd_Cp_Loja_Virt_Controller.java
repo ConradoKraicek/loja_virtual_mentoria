@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
 import conra.mentoria.lojavirtual.ExceptionMentoriaJava;
 import conra.mentoria.lojavirtual.model.Endereco;
 import conra.mentoria.lojavirtual.model.ItemVendaLoja;
@@ -238,7 +237,6 @@ public class Vd_Cp_Loja_Virt_Controller {
 	public ResponseEntity<List<VendaCompraLojaVirtualDTO>> consultaVendaDinamicaFaixaData(@PathVariable("data1") String data1, @PathVariable("data2") String data2) throws ParseException {
 		
 		List<VendaCompraLojaVirtual> vendaCompraLojaVirtual = null;
-		
 		
 		vendaCompraLojaVirtual = vendaService.consultaVendaFaixaData(data1, data2);
 		

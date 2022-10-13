@@ -22,9 +22,21 @@ public interface Vd_Cp_Loja_Virt_Repository extends JpaRepository<VendaCompraLoj
     
 	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and upper(trim(i.produto.nome)) like %?1%")
 	List<VendaCompraLojaVirtual> vendaPorNomeProduto(String valor);
+	
+	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and i.vendaCompraLojaVirtual.pessoa.id = ?1")
+	List<VendaCompraLojaVirtual> vendaPorCliente(Long idCliente);
     
 	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and upper(trim(i.vendaCompraLojaVirtual.pessoa.nome)) like %?1%")
 	List<VendaCompraLojaVirtual> vendaPorNomeCliente(String nomePessoa);
+	
+	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and upper(trim(i.vendaCompraLojaVirtual.pessoa.nome)) like %?1% and i.vendaCompraLojaVirtual.pessoa.cpf = ?2")
+	List<VendaCompraLojaVirtual> vendaPorNomeCliente(String nomePessoa, String cpf);
+	
+	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and upper(trim(i.vendaCompraLojaVirtual.pessoa.cpf)) like %?1%")
+	List<VendaCompraLojaVirtual> vendaPorCpfClienteLike(String cpf);
+	
+	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and i.vendaCompraLojaVirtual.pessoa.cpf = ?1")
+	List<VendaCompraLojaVirtual> vendaPorCpfClienteIgual(String cpf);
 	
 	@Query(value = "select i.vendaCompraLojaVirtual from ItemVendaLoja i where i.vendaCompraLojaVirtual.excluido = false and upper(trim(i.vendaCompraLojaVirtual.enderecoCobranca.ruaLogra)) like %?1%")
 	List<VendaCompraLojaVirtual> vendaPorEnderecoCobranca(String enderecoCobranca);
