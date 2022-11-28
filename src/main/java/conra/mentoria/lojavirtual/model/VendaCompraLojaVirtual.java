@@ -11,6 +11,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ConstraintMode;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
@@ -28,6 +30,8 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import conra.mentoria.lojavirtual.enums.StatusVendaLojaVirtual;
 
 @Entity
 @Table(name = "vd_cp_loja_virt")
@@ -100,6 +104,11 @@ public class VendaCompraLojaVirtual implements Serializable {
 	@JoinColumn(name = "empresa_id", nullable = false, foreignKey = @ForeignKey(value = ConstraintMode.CONSTRAINT, name = "empresa_id_fk"))
 	private PessoaJuridica empresa;
 	
+	@NotNull(message = "Status da venda ou compra deve ser informado")
+	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
+	private StatusVendaLojaVirtual statusVendaLojaVirtual;
+	
 	@OneToMany(mappedBy = "vendaCompraLojaVirtual", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<ItemVendaLoja> itemVendaLojas = new ArrayList<>();
 	
@@ -112,6 +121,14 @@ public class VendaCompraLojaVirtual implements Serializable {
 
 	public void setExcluido(Boolean excluido) {
 		this.excluido = excluido;
+	}
+	
+	public StatusVendaLojaVirtual getStatusVendaLojaVirtual() {
+		return statusVendaLojaVirtual;
+	}
+
+	public void setStatusVendaLojaVirtual(StatusVendaLojaVirtual statusVendaLojaVirtual) {
+		this.statusVendaLojaVirtual = statusVendaLojaVirtual;
 	}
 
 	public List<ItemVendaLoja> getItemVendaLojas() {
