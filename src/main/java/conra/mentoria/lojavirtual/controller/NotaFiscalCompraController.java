@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import conra.mentoria.lojavirtual.ExceptionMentoriaJava;
 import conra.mentoria.lojavirtual.model.NotaFiscalCompra;
 import conra.mentoria.lojavirtual.model.NotaFiscalVenda;
+import conra.mentoria.lojavirtual.model.dto.ObjetoRelatorioStatusCompraDTO;
 import conra.mentoria.lojavirtual.model.dto.ObjetoRequisicaoRelatorioProdutoAlertaEstoqueDTO;
 import conra.mentoria.lojavirtual.model.dto.ObjetoRequisicaoRelatorioProdutoCompraNotaFiscalDTO;
 import conra.mentoria.lojavirtual.repository.NotaFiscalCompraRepository;
@@ -36,6 +37,20 @@ public class NotaFiscalCompraController {
 	
 	@Autowired
 	private NotaFiscalCompraService notaFiscalCompraService;
+	
+	
+	
+	@ResponseBody
+	@PostMapping(value = "**/relatorioStatusCompra")
+	public ResponseEntity<List<ObjetoRelatorioStatusCompraDTO>> relatorioStatusCompra(@Valid @RequestBody ObjetoRelatorioStatusCompraDTO objetoRelatorioStatusCompraDTO ) {
+		
+		List<ObjetoRelatorioStatusCompraDTO> retorno = new ArrayList<>();
+		
+		retorno = notaFiscalCompraService.gerarRelatorioStatusVendaLojaVirtual(objetoRelatorioStatusCompraDTO);
+		
+		return new ResponseEntity<List<ObjetoRelatorioStatusCompraDTO>>(retorno, HttpStatus.OK);
+		
+	}
 	
 	
 	@ResponseBody

@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
+import conra.mentoria.lojavirtual.model.dto.ObjetoRelatorioStatusCompraDTO;
 import conra.mentoria.lojavirtual.model.dto.ObjetoRequisicaoRelatorioProdutoAlertaEstoqueDTO;
 import conra.mentoria.lojavirtual.model.dto.ObjetoRequisicaoRelatorioProdutoCompraNotaFiscalDTO;
 
@@ -16,6 +17,40 @@ public class NotaFiscalCompraService {
 	
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	
+	public List<ObjetoRelatorioStatusCompraDTO> gerarRelatorioStatusVendaLojaVirtual(ObjetoRelatorioStatusCompraDTO objetoRelatorioStatusCompraDTO) {
+		
+		List<ObjetoRelatorioStatusCompraDTO> retorno = new ArrayList<ObjetoRelatorioStatusCompraDTO>();
+		
+		String sql = "select p.id as codigoProduto, p.nome as nomeProduto, pf.email as emailCliente, pf.telefone as foneCliente, p.valor_venda as valorVendaProduto, "
+				+ " pf.id as codigoCliente, pf.nome as nomeCliente, p.qtd_estoque as qtEstoque, cfc.id as codigoVenda, cfc.status_venda_loja_virtual as statusVenda "
+				+ " from vd_cp_loja_virt as cfc "
+				+ " inner join item_venda_loja as nip "
+				+ " on nip.venda_compra_loja_virtual_id = cfc.id "
+				+ " inner join produto as p "
+				+ " on p.id = nip.produto_id "
+				+ " inner join pessoa_fisica as pf "
+				+ " on pf.id = cfc.pessoa_id ";
+		
+				sql += " where cfc.data_venda >= '"+objetoRelatorioStatusCompraDTO.getDataInicial()+"' and cfc.data_venda <= '"+objetoRelatorioStatusCompraDTO.getDataFinal()+"' ";
+				
+				if (!objetoRelatorioStatusCompraDTO.getNomeProduto().isEmpty()) {
+					sql += " and upper(p.nome) like upper('%"+objetoRelatorioStatusCompraDTO.getNomeProduto()+"%') ";
+				}
+				
+				if (!objetoRelatorioStatusCompraDTO.getStatusVenda().isEmpty()) {
+					sql += " and cfc.status_venda_loja_virtual in ('" + objetoRelatorioStatusCompraDTO.getStatusVenda()+"') ";
+				}
+				
+				if (!objetoRelatorioStatusCompraDTO.getNomeCliente().isEmpty()) {
+					sql += " and and pf.nome like '%"+objetoRelatorioStatusCompraDTO.getNomeCliente()+"%' ";
+				}
+				
+		retorno = jdbcTemplate.query(sql, new BeanPropertyRowMapper(ObjetoRelatorioStatusCompraDTO.class));
+		
+		return retorno;
+	}
 	
 	/**
 	 * Title: Histórico de compras de produto para a loja.
