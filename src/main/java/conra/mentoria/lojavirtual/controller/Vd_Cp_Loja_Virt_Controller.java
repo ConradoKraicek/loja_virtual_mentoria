@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.mail.MessagingException;
@@ -21,7 +22,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import conra.mentoria.lojavirtual.ExceptionMentoriaJava;
+import conra.mentoria.lojavirtual.enums.ApiTokenIntegração;
 import conra.mentoria.lojavirtual.enums.StatusContaReceber;
 import conra.mentoria.lojavirtual.model.ContaReceber;
 import conra.mentoria.lojavirtual.model.Endereco;
@@ -29,6 +34,8 @@ import conra.mentoria.lojavirtual.model.ItemVendaLoja;
 import conra.mentoria.lojavirtual.model.PessoaFisica;
 import conra.mentoria.lojavirtual.model.StatusRastreio;
 import conra.mentoria.lojavirtual.model.VendaCompraLojaVirtual;
+import conra.mentoria.lojavirtual.model.dto.ConsultaFreteDTO;
+import conra.mentoria.lojavirtual.model.dto.EmpresaTransporteDTO;
 import conra.mentoria.lojavirtual.model.dto.ItemVendaDTO;
 import conra.mentoria.lojavirtual.model.dto.VendaCompraLojaVirtualDTO;
 import conra.mentoria.lojavirtual.repository.ContaReceberRepository;
@@ -38,6 +45,8 @@ import conra.mentoria.lojavirtual.repository.StatusRastreioRepository;
 import conra.mentoria.lojavirtual.repository.Vd_Cp_Loja_Virt_Repository;
 import conra.mentoria.lojavirtual.service.ServiceSendEmail;
 import conra.mentoria.lojavirtual.service.VendaService;
+import okhttp3.OkHttpClient;
+import okhttp3.Response;
 
 @RestController
 public class Vd_Cp_Loja_Virt_Controller {
@@ -412,4 +421,66 @@ public class Vd_Cp_Loja_Virt_Controller {
 		return new ResponseEntity<List<VendaCompraLojaVirtualDTO>>(compraLojaVirtualDTOList, HttpStatus.OK); 
     	
     }	
+	
+	@ResponseBody
+	@PostMapping(value = "**/consultarFreteLojaVirtual")
+	public ResponseEntity<List<EmpresaTransporteDTO>> consultaFrete(@RequestBody @Valid ConsultaFreteDTO consultaFreteDTO) throws Exception {
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		String json = objectMapper.writeValueAsString(consultaFreteDTO);
+		
+		OkHttpClient client = new OkHttpClient().newBuilder().build(); /*Instancia o objeto de requisição*/
+		okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/json"); /*Tipo do dados JSON*/
+		okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, json); /*Entrada do JSON*/
+		okhttp3.Request request = new okhttp3.Request.Builder()
+		  .url(ApiTokenIntegração.URL_MELHOR_ENVIO_SAND_BOX + "api/v2/me/shipment/calculate")
+		  .method("POST", body)
+		  .addHeader("Accept", "application/json")
+		  .addHeader("Content-Type", "application/json")
+		  .addHeader("Authorization", "Bearer " + ApiTokenIntegração.TOKEN_MELHOR_ENVIO_SAND_BOX)
+		  .addHeader("User-Agent", "conradoempresa123@gmail.com")
+		  .build();
+		okhttp3.Response response = client.newCall(request).execute();
+		
+		
+		JsonNode jsonNode = new ObjectMapper().readTree(response.body().string());
+		
+		Iterator<JsonNode> iterator = jsonNode.iterator();
+		
+		List<EmpresaTransporteDTO> empresaTransporteDTOs = new ArrayList<EmpresaTransporteDTO>();
+		
+		while (iterator.hasNext()) {
+			
+			JsonNode node = iterator.next();
+			
+			EmpresaTransporteDTO empresaTransporteDTO = new EmpresaTransporteDTO();
+			
+			if (node.get("id") != null) {
+				empresaTransporteDTO.setId(node.get("id").asText());
+			}
+			
+			if (node.get("name") != null) {
+				empresaTransporteDTO.setNome(node.get("name").asText());
+			}
+			
+			if (node.get("price") != null) {
+				empresaTransporteDTO.setValor(node.get("price").asText());
+			}
+			
+			if (node.get("company") != null) {
+				empresaTransporteDTO.setEmpresa(node.get("company").get("name").asText());
+				empresaTransporteDTO.setPicture(node.get("company").get("picture").asText());
+			}
+			
+			if (empresaTransporteDTO.dadosOK()) {
+				
+				empresaTransporteDTOs.add(empresaTransporteDTO);
+			}
+			
+		}
+		
+		
+		return new ResponseEntity<List<EmpresaTransporteDTO>>(empresaTransporteDTOs, HttpStatus.OK);
+		
+	}
 }
