@@ -1,0 +1,32 @@
+/*GERA AS ETIQUETAS*/
+
+
+{
+    "orders":[
+        "4683ecc2-cec6-48e7-9ebf-58df1329ab52"
+    ]
+}
+
+
+/*RETORNO DA GERAÇÃO DA ETIQUETA*/
+
+
+{"4683ecc2-cec6-48e7-9ebf-58df1329ab52":{"status":true,"message":"Envio gerado com sucesso"}}
+
+
+
+
+
+/*IMPRESSÃO DAS ETIQUETAS*/
+
+
+{
+    "mode": "private",
+    "orders": [
+        "4683ecc2-cec6-48e7-9ebf-58df1329ab52"
+    ]
+}
+
+/*RESULTADO DA IMPRESSÃO DA ETIQUETA*/
+
+http:\\sandbox.melhorenvio.com.br\imprimir\vnUtBIV5G1tk

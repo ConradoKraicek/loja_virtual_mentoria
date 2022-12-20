@@ -46,7 +46,6 @@ import conra.mentoria.lojavirtual.repository.Vd_Cp_Loja_Virt_Repository;
 import conra.mentoria.lojavirtual.service.ServiceSendEmail;
 import conra.mentoria.lojavirtual.service.VendaService;
 import okhttp3.OkHttpClient;
-import okhttp3.Response;
 
 @RestController
 public class Vd_Cp_Loja_Virt_Controller {
