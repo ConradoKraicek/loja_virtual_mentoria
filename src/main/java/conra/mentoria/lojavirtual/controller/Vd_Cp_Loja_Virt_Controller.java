@@ -431,6 +431,27 @@ public class Vd_Cp_Loja_Virt_Controller {
     }	
 	
 	@ResponseBody
+	@GetMapping(value = "**/cancelaEtiqueta/{idEtiqueta}/{descricao}")
+	public ResponseEntity<String> cancelaEtiqueta(@PathVariable String idEtiqueta, @PathVariable String reason_id, @PathVariable String descricao) throws IOException {
+		
+		        OkHttpClient client = new OkHttpClient().newBuilder().build();
+		        okhttp3.MediaType mediaType = okhttp3.MediaType.parse("application/json");
+		        okhttp3.RequestBody body = okhttp3.RequestBody.create(mediaType, "{\n    \"order\": {\n        \"id\": \""+idEtiqueta+"\",\n        \"reason_id\": \""+reason_id+"\",\n        \"description\": \""+descricao+"\"\n    }\n}");
+		        okhttp3.Request request = new okhttp3.Request.Builder()
+				  .url(ApiTokenIntegração.URL_MELHOR_ENVIO_SAND_BOX + "api/v2/me/shipment/cancel")
+				  .method("POST", body)
+				  .addHeader("Accept", "application/json")
+				  .addHeader("Content-Type", "application/json")
+				  .addHeader("Authorization", "Bearer " + ApiTokenIntegração.TOKEN_MELHOR_ENVIO_SAND_BOX)
+				  .addHeader("User-Agent", "conradoempresa123@gmail.com")
+				  .build();
+		        okhttp3.Response response = client.newCall(request).execute();
+		        
+		        return new ResponseEntity<String>(response.body().string(), HttpStatus.OK);
+		
+	}
+	
+	@ResponseBody
 	@GetMapping(value = "**/imprimeCompraEtiquetaFrete/{idVenda}")
 	public ResponseEntity<String> imprimeCompraEtiquetaFrete(@PathVariable Long idVenda) throws ExceptionMentoriaJava, IOException {
 		
