@@ -51,7 +51,10 @@ import conra.mentoria.lojavirtual.repository.StatusRastreioRepository;
 import conra.mentoria.lojavirtual.repository.Vd_Cp_Loja_Virt_Repository;
 import conra.mentoria.lojavirtual.service.ServiceSendEmail;
 import conra.mentoria.lojavirtual.service.VendaService;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 @RestController
 public class Vd_Cp_Loja_Virt_Controller {
@@ -113,15 +116,6 @@ public class Vd_Cp_Loja_Virt_Controller {
 		
 		/*Salva primeiro a venda e todos os dados*/
 		vendaCompraLojaVirtual = vd_Cp_Loja_Virt_Repository.saveAndFlush(vendaCompraLojaVirtual);
-		
-		StatusRastreio statusRastreio = new StatusRastreio();
-		statusRastreio.setCentroDistribuicao("Loja Local");
-		statusRastreio.setCidade("Local");
-		statusRastreio.setEmpresa(vendaCompraLojaVirtual.getEmpresa());
-		statusRastreio.setEstado("Local");
-		statusRastreio.setStatus("Inicaio compra");
-		statusRastreio.setVendaCompraLojaVirtual(vendaCompraLojaVirtual);
-		statusRastreioRepository.save(statusRastreio);
 		
 		
 		/*Associa a venda gravada no banco com a nota fiscal*/
@@ -643,6 +637,51 @@ public class Vd_Cp_Loja_Virt_Controller {
         /*Salvando a url da etiqueta*/
         jdbcTemplate.execute("begin; update vd_cp_loja_virt set url_imprime_etiqueta = '"+urlEtiqueta+"' where id = "+compraLojaVirtual.getId()+" ;commit;");
         //vd_Cp_Loja_Virt_Repository.updateUrlEtiqueta(urlEtiqueta, compraLojaVirtual.getId());
+        
+        
+        OkHttpClient clientRastreio = new OkHttpClient().newBuilder().build();
+        okhttp3.MediaType mediaTypeRastreio = okhttp3.MediaType.parse("application/json");
+        okhttp3.RequestBody bodyRastreio = okhttp3.RequestBody.create(mediaTypeRastreio, "{\n    \"orders\": [\n        \"4683ecc2-cec6-48e7-9ebf-58df1329ab52\"\n    ]\n}");
+        okhttp3.Request requestRastreio = new okhttp3.Request.Builder()
+		  .url(ApiTokenIntegração.URL_MELHOR_ENVIO_SAND_BOX + "api/v2/me/shipment/tracking")
+		  .method("POST", bodyRastreio)
+		  .addHeader("Accept", "application/json")
+		  .addHeader("Content-Type", "application/json")
+		  .addHeader("Authorization", "Bearer " + ApiTokenIntegração.TOKEN_MELHOR_ENVIO_SAND_BOX)
+		  .addHeader("User-Agent", "conradoempresa123@gmail.com")
+		  .build();
+		okhttp3.Response responseRastreio = clientRastreio.newCall(requestRastreio).execute();
+		
+	    JsonNode jsonNodeRastreio = new ObjectMapper().readTree(responseRastreio.body().string());
+		
+		Iterator<JsonNode> iteratorRastreio = jsonNode.iterator();
+		
+		String idEtiquetaRastreio = "";
+		
+        while (iteratorRastreio.hasNext()) {
+			JsonNode node = iteratorRastreio.next();
+			if (node.get("tracking") != null) {
+				idEtiquetaRastreio = node.get("tracking").asText();
+			} else {
+				//idEtiquetaRastreio = node.asText();
+				idEtiquetaRastreio = node.get("tracking").asText();
+			}
+			break;
+
+        }
+        
+        List<StatusRastreio> rastreios = statusRastreioRepository.listaRastreioVenda(idVenda);
+        
+        if (rastreios.isEmpty()) {
+			StatusRastreio rastreio = new StatusRastreio();
+			rastreio.setEmpresa(compraLojaVirtual.getEmpresa());
+			rastreio.setVendaCompraLojaVirtual(compraLojaVirtual);
+			rastreio.setUrlRastreio("https://www.melhorrastreio.com.br/rastreio/" + idEtiquetaRastreio);
+			
+			statusRastreioRepository.saveAndFlush(rastreio);
+		} else {
+			statusRastreioRepository.salvaUrlRastreio("https://www.melhorrastreio.com.br/rastreio/" + idEtiquetaRastreio, idVenda);
+		}
 		
 		return new ResponseEntity<String>("Sucesso", HttpStatus.OK);
 		
