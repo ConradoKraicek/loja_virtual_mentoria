@@ -13,6 +13,7 @@ import conra.mentoria.lojavirtual.model.Endereco;
 import conra.mentoria.lojavirtual.model.PessoaFisica;
 import conra.mentoria.lojavirtual.model.PessoaJuridica;
 import conra.mentoria.lojavirtual.repository.PessoaRepository;
+import conra.mentoria.lojavirtual.service.ServiceJunoBoleto;
 import junit.framework.TestCase;
 
 @Profile("test")
@@ -24,6 +25,17 @@ public class TestePessoaUsuario extends TestCase {
 	
 	@Autowired
 	private PessoaController pessoaController;
+	
+	@Autowired
+	private ServiceJunoBoleto serviceJunoBoleto;
+	
+	
+	@Test
+	public void testeToken() throws Exception {
+		
+		serviceJunoBoleto.obterTokenApiJuno();
+		
+	}
 	
 	
 	@Test
