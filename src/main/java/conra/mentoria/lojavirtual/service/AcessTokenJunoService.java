@@ -4,8 +4,11 @@ import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
+import org.springframework.stereotype.Service;
+
 import conra.mentoria.lojavirtual.model.AcessTokenJunoAPI;
 
+@Service
 public class AcessTokenJunoService {
 	
 	@PersistenceContext
